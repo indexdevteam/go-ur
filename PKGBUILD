@@ -75,7 +75,7 @@ package() {
 
   install -Dm644 VERSION "$pkgdir/usr/lib/go/VERSION"
 
-  rm -rf "$pkgdir/usr/lib/go/pkg/bootstrap" "$pkgdir/usr/lib/go/pkg/tool/*/api"
+  rm -rf "$pkgdir/usr/lib/go/pkg/bootstrap"
 
   # TODO: Figure out if really needed
   rm -rf "$pkgdir"/usr/lib/go/pkg/obj/go-build
