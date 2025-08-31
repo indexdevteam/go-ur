@@ -44,6 +44,9 @@ build() {
   export GOROOT_FINAL=/usr/lib/go
   export GOROOT_BOOTSTRAP=/usr/lib/go
 
+  # Disable dwarf5 until debugedit catches up
+  export GOEXPERIMENT=nodwarf5
+
   cd "$pkgname/src"
   ./make.bash -v
 }
