@@ -13,7 +13,7 @@
 # Contributor: John Luebs <jkluebs@gmail.com>
 
 # TODO
-# Remember to rebuild go-tools, delve, gopls on new go versions
+# Remember to rebuild go-tools, delve, gopls, golangci-lint on new go versions
 
 pkgname=go
 epoch=2
