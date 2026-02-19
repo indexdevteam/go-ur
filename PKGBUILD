@@ -14,6 +14,7 @@
 
 # TODO
 # Remember to rebuild go-tools, delve, gopls, golangci-lint, staticcheck on new go versions
+# pkgctl build --offload --rebuild --testing --release go-tools delve gopls golangci-lint staticcheck
 
 pkgname=go
 epoch=2
