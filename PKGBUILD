@@ -18,7 +18,7 @@
 
 pkgname=go
 epoch=2
-pkgver=1.26.2
+pkgver=1.26.3
 pkgrel=1
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(x86_64)
@@ -31,7 +31,7 @@ options=(!strip staticlibs)
 source=("https://go.dev/dl/go${pkgver}.src.tar.gz"{,.asc}
         fix-avx512ScanPackedReqsMet.patch)
 validpgpkeys=('EB4C1BFD4F042F6DDDCCEC917721F63BD38B4796')
-sha256sums=('2e91ebb6947a96e9436fb2b3926a8802efe63a6d375dffec4f82aa9dbd6fd43b'
+sha256sums=('1c646875d0aa8799133184ed57cf79ff24bdefe8c8820470602a9d3d6d9192b8'
             'SKIP'
             '37909d8154d245b22ea506851bccc71eeffe2ad2756eb6dfb53ab48b58de589b')
 
