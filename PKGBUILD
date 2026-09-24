@@ -113,7 +113,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=8
+pkgrel=9
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -153,6 +153,7 @@ options=(
   "!strip"
   "staticlibs"
 )
+_tarname="${_pkg}"
 source=(
   "https://${_pkg}.dev/dl/${_pkg}${pkgver}.src.tar.gz"{,.asc}
 )
@@ -178,11 +179,32 @@ _usr_get() {
     "${_bin}"
 }
 
+_android_fix_shebang() {
+  local \
+    _file="${1}" \
+    _pattern \
+    _patterns=() \
+    _repl
+  _pattern=(
+    "#!/usr/bin/env"
+    "# !/usr/bin/env"
+  )
+  _repl="#!/data/data/com.termux/files/usr/bin/env bash"
+  for _pattern in "${_patterns[@]}"; do
+    sed \
+      "s%${_pattern}%${_repl}%g" \
+      -i \
+      "${_file}"
+  done
+}
+
 build() {
   local \
     _arch \
     _msg=() \
+    _make_bash \
     _usr
+  _make_bash="${srcdir}/${_tarname}/src/make.bash"
   _usr="$(
     _usr_get)"
   _arch="$(
@@ -209,8 +231,12 @@ build() {
   export \
     GOEXPERIMENT="nodwarf5"
   cd \
-    "${_pkg}/src"
-  "./make.bash" \
+    "${_tarname}/src"
+  if [[ "${_os}" == "Android" ]]; then
+    _android_fix_shebang \
+      "${_make_bash}"
+  fi
+  "${_make_bash}" \
     -v
 }
 
@@ -243,7 +269,7 @@ package() {
     uname \
       -m)"
   cd \
-    "${_pkg}"
+    "${_tarname}"
   install \
     -vdm755 \
     "${pkgdir}/usr/bin" \
