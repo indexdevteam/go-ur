@@ -1207,6 +1207,11 @@ jobs:
                 _evmfs="false" \
                 recipe-get \
                   "PKGBUILD" \
+                  "epoch"):$( \
+              /entrypoint.sh \
+                _evmfs="false" \
+                recipe-get \
+                  "PKGBUILD" \
                   "pkgver")-$( \
               /entrypoint.sh \
                 _evmfs="false" \
@@ -2281,35 +2286,35 @@ jobs:
           actions/setup-node@v5
       - uses:
           actions/checkout@v7.0.1
-      - name:
-          Installs recent EVM GNUPG.
-        env:
-          GITHUB_TOKEN:
-            ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pacman \
-            -S \
-            --noconfirm \
-            "mingw-w64-ucrt-${{ matrix.env }}-github-cli"
-          bash \
-            ".github/gur-mini" \
-            "themartiancompany" \
-            "evm-gnupg" \
-            "0.0.0.0.0.0.0.0.1.1.1.1.1.1-15"
-          # git \
-          #   clone \
-          #     --single-branch \
-          #     --depth=1 \
-          #     "https://github.com/themartiancompany/evm-gnupg" \
-          #     "${HOME}/evm-gnupg-src" || \
-          # true
-          # cd \
-          #   "${HOME}/evm-gnupg-src"
-          # make \
-          #   -C \
-          #       "${HOME}/evm-gnupg-src" \
-          #   PREFIX="/usr" \
-          #   install-scripts
+      name:
+        Installs recent EVM GNUPG.
+      env:
+        GITHUB_TOKEN:
+          ${{ secrets.GITHUB_TOKEN }}
+      run: |
+          # pacman \
+          #   -S \
+          #   --noconfirm \
+          #   "mingw-w64-ucrt-${{ matrix.env }}-github-cli"
+          # bash \
+          #   ".github/gur-mini" \
+          #   "themartiancompany" \
+          #   "evm-gnupg" \
+          #   "0.0.0.0.0.0.0.0.1.1.1.1.1.1-15"
+          git \
+            clone \
+              --single-branch \
+              --depth=1 \
+              "https://github.com/themartiancompany/evm-gnupg" \
+              "${HOME}/evm-gnupg-src" || \
+          true
+          cd \
+            "${HOME}/evm-gnupg-src"
+          make \
+            -C \
+                "${HOME}/evm-gnupg-src" \
+            PREFIX="/usr" \
+            install-scripts
       - name:
           Installs build dependencies.
         env:
