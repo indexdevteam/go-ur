@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=27
+pkgrel=28
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -390,11 +390,11 @@ build() {
     ${CXXFLAGS}
   )
   _go_flags+=(
-    # -buildmode=pie
-    # -trimpath
-    # -ldflags=-linkmode=external
-    # -mod=vendor
-    # -modcacherw
+    -buildmode=pie
+    -trimpath
+    -ldflags=-linkmode=external
+    -mod=vendor
+    -modcacherw
   )
   _make_bash="${srcdir}/${_tarname}/src/make.bash"
   _make_bat="${srcdir}/${_tarname}/src/make.bat"
@@ -449,7 +449,7 @@ build() {
       CGO_CFLAGS="${CFLAGS}" \
       CGO_CXXFLAGS="${_cxxflags[*]}" \
       CGO_LDFLAGS="${_ldflags[*]}" \
-      G0_LDSO="${_linker}"
+      G0_LDSO="${_linker}" \
       GOFLAGS="${_go_flags[*]}"
     _android_fix_shebang \
       "${_make_bash}"
