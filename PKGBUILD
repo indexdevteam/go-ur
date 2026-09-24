@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=22
+pkgrel=24
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -151,6 +151,12 @@ arch=(
   "pentium4"
   "powerpc"
   "x86_64"
+)
+mingw_arch=(
+  'mingw64'
+  'ucrt64'
+  'clang64'
+  'clangarm64'
 )
 url="https://${_pkg}.dev"
 license=(
@@ -418,7 +424,7 @@ build() {
   if [[ "${_os}" == "Android" ]]; then
     _ldflags+=(
       # "$LDFLAGS"
-      -extldflag="-pie"
+      "-extldflag=-pie"
     )
     _linker="/system/bin/linker"
     if [[ "${_arch}" == "aarch64" || \
