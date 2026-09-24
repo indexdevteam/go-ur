@@ -2445,28 +2445,37 @@ jobs:
           GITHUB_TOKEN:
             ${{ secrets.GITHUB_TOKEN }}
         run: |
-          pacman \
-            -S \
-            --noconfirm \
-            "mingw-w64-ucrt-${{ matrix.env }}-github-cli"
-          pacman \
-            -Ql \
-            "mingw-w64-ucrt-${{ matrix.env }}-github-cli" | \
-            grep \
-              "bin"
-          bash \
-            ".github/gur-mini" \
-            "themartiancompany" \
-            "libassuan" \
-            "3.0.2-32" \
-            "x86_64" \
-            "libassuan"
-          pacman \
-            -Udd \
-            --noconfirm \
-            --overwrite="*" \
-            "dogeos-windows-libassuan"*".pkg.tar."*
-
+          # pacman \
+          #   -S \
+          #   --noconfirm \
+          #   "mingw-w64-ucrt-${{ matrix.env }}-github-cli"
+          # pacman \
+          #   -Ql \
+          #   "mingw-w64-ucrt-${{ matrix.env }}-github-cli" | \
+          #   grep \
+          #     "bin"
+          # bash \
+          #   ".github/gur-mini" \
+          #   "themartiancompany" \
+          #   "libassuan" \
+          #   "3.0.2-32" \
+          #   "x86_64" \
+          #   "libassuan"
+          # pacman \
+          #   -Udd \
+          #   --noconfirm \
+          #   --overwrite="*" \
+          #   "dogeos-windows-libassuan"*".pkg.tar."*
+          fur \
+            -v \
+            -t \
+              "ci" \
+            -m \
+              "github" \
+            -p \
+              "pacman" \
+            "libassuan" || \
+          true; \
       - uses:
           actions/checkout@v7.0.1
       - name:
