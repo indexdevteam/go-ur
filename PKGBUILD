@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=42
+pkgrel=43
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
