@@ -59,14 +59,14 @@ jobs:
           # I think there may be
           # some fix needed for
           # 32-bit arches
-          # - runner:
-          #     ubuntu-24.04
-          #   platform:
-          #     android
-          #   platform_target:
-          #     termux
-          #   architecture:
-          #     i686
+          - runner:
+              ubuntu-24.04
+            platform:
+              android
+            platform_target:
+              termux
+            architecture:
+              i686
           # I doubt the issue is only
           # with ARM32 at this point
           # - runner:

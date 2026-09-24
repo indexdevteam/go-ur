@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=45
+pkgrel=46
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -392,6 +392,7 @@ build() {
   local \
     _arch \
     _cflags=() \
+    _cflags=() \
     _cxx_flags=() \
     _go_flags=() \
     _ldflags=() \
@@ -401,6 +402,9 @@ build() {
     _make_win \
     _make \
     _usr
+  _cflags=(
+    ${CFLAGS}
+  )
   _cflags=(
     # ${CFLAGS}
   )
@@ -465,6 +469,9 @@ build() {
       # ld.ldd: error: relocation R_ARM_ABS32
       # cannot be used against symbol 'runtime.call256';
       # recompile with -fPIC
+      _cflags+=(
+        -fPIC
+      )
       _cxxflags+=(
         -fPIC
       )
@@ -472,7 +479,9 @@ build() {
     export \
       CC_FOR_TARGET="clang" \
 		  CXX_FOR_TARGET="clang" \
-		  CC="clang"
+		  CC="clang" \
+		  CFLAGS="${_cflags[*]}" \
+		  CXXFLAGS="${_cxxflags[*]}"
     export \
       CGO_ENABLED=1 \
       CGO_CPPFLAGS="${CPPFLAGS}" \
