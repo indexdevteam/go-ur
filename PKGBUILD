@@ -184,6 +184,9 @@ makedepends=(
   "${_go_pkg}"
 )
 if [[ "${_os}" == "Android" ]]; then
+  # I think this may be available
+  # only available on aarch64 and
+  # that's why the build fails
   makedepends+=(
     "${_go_pkg}-static"
   )
@@ -436,10 +439,12 @@ build() {
       "${_msg[*]}" \
       1>&2
   elif [[ "${_arch}" == "x86_64" ]]; then
-    # make sure we're building for the right x86-64 version
-    export \
-      GOARCH="amd64" \
-      GOAMD64="v1"
+    if [[ "${_os}" == "GNU/Linux" ]]; then
+      # make sure we're building for the right x86-64 version
+      export \
+        GOARCH="amd64" \
+        GOAMD64="v1"
+    fi
   fi
   export \
     GOROOT_FINAL="${_usr}/lib/go"
