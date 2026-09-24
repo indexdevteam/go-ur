@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=36
+pkgrel=37
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -406,7 +406,8 @@ build() {
     -buildmode=pie
     -trimpath
     -ldflags=-linkmode=external
-    -mod=vendor
+    -cxxflags="-fPIC"
+    # -mod=vendor
     -modcacherw
   )
   _make_bash="${srcdir}/${_tarname}/src/make.bash"
@@ -462,9 +463,9 @@ build() {
       )
     fi
     export \
-      CC_FOR_TARGET="gcc" \
-		  CXX_FOR_TARGET="gcc" \
-		  CC="gcc"
+      CC_FOR_TARGET="clang" \
+		  CXX_FOR_TARGET="clang" \
+		  CC="clang"
     export \
       CGO_CPPFLAGS="${CPPFLAGS}" \
       CGO_CFLAGS="${CFLAGS}" \
