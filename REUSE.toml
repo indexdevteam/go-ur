@@ -23,7 +23,19 @@ SPDX-License-Identifier = "AGPL3"
 
 [[annotations]]
 path = [
+    "fix-android-netlink.diff",
+    "fix-hardcoded-etc-resolv-conf.diff",
+    "remove-futex_time64.diff",
+    "remove-pidfd.diff",
+]
+
+SPDX-FileCopyrightText = "Termux contributors"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
+path = [
     "fix-avx512ScanPackedReqsMet.patch",
 ]
 SPDX-FileCopyrightText = "The Go Authors"
 SPDX-License-Identifier = "BSD-3-Clause"
+
