@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=39
+pkgrel=40
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -188,11 +188,11 @@ if [[ "${_git}" == "true" ]]; then
     "git"
   )
 fi
-if [[ "${_os}" == "Android" ]]; then
-  makedepends+=(
-    "gcc"
-  )
-fi
+# if [[ "${_os}" == "Android" ]]; then
+#   makedepends+=(
+#     "gcc"
+#   )
+# fi
 replaces=(
   "${_pkg}-pie"
 )
@@ -405,7 +405,8 @@ build() {
   _go_flags+=(
     -buildmode=pie
     -trimpath
-    -ldflags=-linkmode=external
+    -extldflags="-pie"
+    -ldflags="-linkmode=external"
     -cxxflags="-fPIC"
     # -mod=vendor
     -modcacherw
