@@ -85,21 +85,32 @@ _gur_mini() {
         "A tag must be specified."
       )
       echo \
-        "${_msg[*]}" >&2
+        "${_msg[*]}" \
+	1>&2
       return \
         1
     fi
     _gh="$(
       command \
         -v \
-        gh)"
+        gh || \
+      true)"
     if [[ "${_os}" == "Msys2" ]]; then
       if [[ ! -e "${_gh}" ]]; then
+        _msg=(
+          "[gur-mini] ERROR:"
+	  "No 'gh' command detected."
+        )	
+	echo \
+          "${_msg[*]}" \
+	  1>&2
+        return \
+          1
         if [[ -e "/ucrt64/bin/gh" ]]; then
           _gh="/ucrt64/bin/gh"
         fi
       fi
-    fi
+    fi 
     gh \
       "${_gh_opts[@]}" \
       release \
