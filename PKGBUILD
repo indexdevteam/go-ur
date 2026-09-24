@@ -88,6 +88,9 @@
 _os="$(
   uname \
     -o)"
+_arch="$(
+  uname \
+    -m)"
 if [[ "${_os}" == "Android" ]]; then
   _libc="ndk-sysroot"
   _compiler="clang"
@@ -139,7 +142,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=50
+pkgrel=51
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -196,11 +199,13 @@ if [[ "${_git}" == "true" ]]; then
     "git"
   )
 fi
-# if [[ "${_os}" == "Android" ]]; then
-#   makedepends+=(
-#     "gcc"
-#   )
-# fi
+if [[ "${_os}" == "Android" ]]; then
+  if [[ "${_arch}" == "x86_64" ]]; then
+    makedepends+=(
+      "gcc"
+    )
+  fi
+fi
 replaces=(
   "${_pkg}-pie"
 )
@@ -394,6 +399,7 @@ _prepare() {
 build() {
   local \
     _arch \
+    _cc \
     _cflags=() \
     _cflags=() \
     _cxx_flags=() \
@@ -481,10 +487,15 @@ build() {
         -fPIC
       )
     fi
+    if [[ "${_arch}" == "x86_64" ]]; then
+      _cc="gcc"
+    else
+      _cc="clang"
+    fi
     export \
       CC_FOR_TARGET="clang" \
 		  CXX_FOR_TARGET="clang" \
-		  CC="clang" \
+		  CC="${_cc}" \
 		  CFLAGS="${_cflags[*]}" \
 		  CXXFLAGS="${_cxxflags[*]}"
     export \
