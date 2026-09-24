@@ -88,6 +88,32 @@
 _os="$(
   uname \
     -o)"
+if [[ "${_os}" == "Android" ]]; then
+  _libc="ndk-sysroot"
+  _compiler="clang"
+  _libcompiler="llvm-libs"
+elif [[ "${_os}" == "GNU/Linux" ]]; then
+  _libc="glibc"
+  _compiler="gcc"
+  _libcompiler="libgcc"
+elif [[ "${_os}" == "Msys" ]]; then
+  _libc="msys2-w32api-runtime"
+  _libc_headers="msys2-w32api-headers"
+  _compiler="gcc"
+  _libcompiler="gcc-libs"
+  _sh="sh"
+else
+  _msg=(
+    "Unknown os '${_os}'."
+  )
+  msg \
+    "${_msg[*]}"
+  _libc="msys2-w32api-runtime"
+  _libc_headers="msys2-w32api-headers"
+  _compiler="gcc"
+  _libcompiler="gcc-libs"
+  _sh="sh"
+fi
 if [[ ! -v "_bootstrap" ]]; then
   _bootstrap="false"
   if [[ "${_os}" == "Android" ]]; then
@@ -130,6 +156,22 @@ url="https://${_pkg}.dev"
 license=(
   "BSD-3-Clause"
 )
+depends=(
+  "${_libcompiler}"
+)
+_filesystem_optdepends=(
+  "filesystem:"
+    "For resolv-conf stuff."
+)
+_resolv_conf_optdepends=(
+  "resolv-conf:"
+    "Termux vanilla calls the"
+    "'filesystem' package 'resolv-conf"
+    "(because Debian does so probably)."
+)
+optdepends=(
+  "${filesystem_optdepends[*]}"
+)
 makedepends=(
   # An apparent self-dependency
   "${_go_pkg}"
@@ -159,8 +201,20 @@ _tarfile="${_tarname}.${_archive_format}"
 _uri="https://${_pkg}.dev/dl/${_pkg}${pkgver}.src.${_archive_format}"
 # Android wants some patches maybe
 _src="${_tarfile}::${_uri}"
-
+_sum='4e408abae126d916b6164627193f2c54f0e3ca1312d693b86db45f862ab238b1'
+_paths_patchname="fix-hardcoded-etc-resolv-conf.diff"
+_paths_sum="f9379880162bb743b26f7588492932bf5b71c68f8937f7daa8e8f80d02922b15"
+_pidfd_patchname="remove-pidfd.diff"
+_pidfd_sum="a673dc274d6dd5ef0fd48fc21b576ca41de19d49832c43afae28f0e3c37c17a2"
+_futex_patchname="remove-futex_time64.diff"
+_futex_sum="9360d1a816c7ea3c7532b11e4375c8a969f3256d2efb568764e15653b4757d5f"
+_netlink_patchname="fix-android-netlink.diff"
+_netlink_sum="aac8f44df4bd06ed1466ba5f0369fac666bb2a60aac8805d8629f2d0cde28c3f"
 source=(
+  "${_paths_patchname}"
+  "${_pidfd_patchname}"
+  "${_futex_patchname}"
+  "${_netlink_patchname}"
   "${_src}"{"",".asc"}
 )
 validpgpkeys=(
@@ -169,7 +223,11 @@ validpgpkeys=(
   'EB4C1BFD4F042F6DDDCCEC917721F63BD38B4796'
 )
 sha256sums=(
-  '4e408abae126d916b6164627193f2c54f0e3ca1312d693b86db45f862ab238b1'
+  "${_paths_sum}"
+  "${_pidfd_sum}"
+  "${_futex_sum}"
+  "${_netlink_sum}"
+  "${_sum}"
   'SKIP'
 )
 
@@ -222,20 +280,104 @@ _android_fix_shebang() {
   fi
 }
 
+prepare_android() {
+  local \
+    _file
+  cd \
+    "${srcdir}/${_pkg}"
+  # Fix hardcoded resolv-conf
+  for _file \
+    in "src/net/conf_android.go" \
+       "src/net/dnsclient_android.go"; do
+	  if [[ -e "${_file}" ]]; then
+      echo \
+        "File ${_file} already exists." \
+        1>&2
+      exit \
+        1
+	  fi
+  done
+  cp \
+    -T \
+    "src/net/conf.go" \
+    "src/net/conf_android.go"
+  cp \
+    -T \
+    "src/net/dnsclient_unix.go" \
+    "src/net/dnsclient_android.go"
+  sed \
+    -e \
+    "s|@TERMUX_PREFIX@|${TERMUX_PREFIX}|" \
+	  "${srcdir}/${_paths_patchname}" |
+	  patch \
+      --silent \
+      -p1
+  # Remove pidfd
+  sed \
+    -e \
+    "s|@TERMUX_PREFIX@|${TERMUX_PREFIX}|" \
+	  "${srcdir}/${_pidfd_patchname}" |
+	  patch \
+      --silent \
+      -p1
+  # remove futex time64
+  sed \
+    -e \
+      "s|@TERMUX_PREFIX@|${TERMUX_PREFIX}|" \
+	  "${_futex_patchname}" |
+	  patch \
+      --silent \
+      -p1
+  # fix android netlink
+  for _file \
+    in "src/net/interface_android.go" \
+       "src/syscall/netlink_android.go"; do
+  	if [ -e "${_file}" ]; then
+  		echo \
+        "File ${f} already exists." \
+        1>&2
+      exit \
+        1
+  	fi
+  done
+  cp \
+    -T \
+    "src/syscall/netlink_linux.go" \
+    "src/syscall/netlink_android.go"
+  cp \
+    -T \
+    "src/net/interface_linux.go" \
+    "src/net/interface_android.go"
+  sed \
+    -e \
+      "s|@TERMUX_PREFIX@|${TERMUX_PREFIX}|" \
+  	"${_netlink_patchname}" |
+    patch \
+      --silent \
+      -p1
+}
+
+_prepare() {
+  if [[ "${_os}" == "Android" ]]; then
+    _prepare_android
+  fi
+}
+
 build() {
   local \
     _arch \
+    _go_flags=() \
+    _ldflags=() \
+    _linker \
     _msg=() \
     _make_bash \
     _usr
-  local \
-    _go_flags=()
-  _go_flags=(
+  _go_flags+=(
     # -buildmode=pie
-    -trimpath
+    # -trimpath
     # -ldflags=-linkmode=external
-    -mod=vendor
-    -modcacherw
+    # -mod=vendor
+    # -modcacherw
   )
   _make_bash="${srcdir}/${_tarname}/src/make.bash"
   _usr="$(
@@ -266,11 +408,21 @@ build() {
   cd \
     "${_tarname}/src"
   if [[ "${_os}" == "Android" ]]; then
+    _ldflags+=(
+      # "$LDFLAGS"
+      "-extldflag=-pie"
+    )
+    _linker="/system/bin/linker"
+    if [[ "${_arch}" == "aarch64" || \
+          "${_arch}" == "x86_64" ]]; then
+      _linker="${_linker}64"
+    fi
     export \
       CGO_CPPFLAGS="${CPPFLAGS}" \
       CGO_CFLAGS="${CFLAGS}" \
       CGO_CXXFLAGS="${CXXFLAGS}" \
       CGO_LDFLAGS="${LDFLAGS}" \
+      G0_LDSO="${_linker}"
       GOFLAGS="${_go_flags[*]}"
     _android_fix_shebang \
       "${_make_bash}"
