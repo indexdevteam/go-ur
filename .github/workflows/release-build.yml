@@ -2448,8 +2448,12 @@ jobs:
           pacman \
             -S \
             --noconfirm \
-            "mingw-w64-ucrt-${{ matrix.env }}-github-cli" \
-            "mingw-w64-clang64-${{ matrix.env }}-github-cli"
+            "mingw-w64-ucrt-${{ matrix.env }}-github-cli"
+          pacman \
+            -Ql \
+            "mingw-w64-ucrt-${{ matrix.env }}-github-cli" | \
+            grep \
+              "bin"
           bash \
             ".github/gur-mini" \
             "themartiancompany" \
