@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=33
+pkgrel=34
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -205,8 +205,16 @@ conflicts=(
 )
 options=(
   "!strip"
-  "staticlibs"
 )
+if [[ "${_os}" != "Android" ]]; then
+  options+=(
+    "staticlibs"
+  )
+elif [[ "${_os}" == "Android" ]]; then
+  options+=(
+    "!lto"
+  )
+fi
 _tarname="${_pkg}"
 _archive_format="tar.gz"
 _tarfile="${_tarname}.${_archive_format}"
@@ -454,8 +462,8 @@ build() {
       )
     fi
     export \
-      CC_FOR_TARGET="clang" \
-		  CXX_FOR_TARGET="clang" \
+      CC_FOR_TARGET="gcc" \
+		  CXX_FOR_TARGET="gcc" \
 		  CC="gcc"
     export \
       CGO_CPPFLAGS="${CPPFLAGS}" \
