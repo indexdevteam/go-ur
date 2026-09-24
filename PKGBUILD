@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=41
+pkgrel=42
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -183,6 +183,11 @@ makedepends=(
   # An apparent self-dependency
   "${_go_pkg}"
 )
+if [[ "${_os}" == "Android" ]]; then
+  makedepends+=(
+    "${_go_pkg}-static"
+  )
+fi
 if [[ "${_git}" == "true" ]]; then
   makedepends+=(
     "git"
