@@ -113,7 +113,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=15
+pkgrel=16
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -154,8 +154,14 @@ options=(
   "staticlibs"
 )
 _tarname="${_pkg}"
+_archive_format="tar.gz"
+_tarfile="${_tarname}.${_archive_format}"
+_uri="https://${_pkg}.dev/dl/${_pkg}${pkgver}.src.${_archive_format}"
+# Android wants some patches maybe
+_src="${_tarfile}::${_uri}"
+
 source=(
-  "https://${_pkg}.dev/dl/${_pkg}${pkgver}.src.tar.gz"{,.asc}
+  "${_src}"{"",".asc"}
 )
 validpgpkeys=(
   # Google Inc. (Linux Packages Signing Authority)
