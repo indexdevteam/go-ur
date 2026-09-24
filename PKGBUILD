@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=17
+pkgrel=18
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -170,7 +170,8 @@ _resolv_conf_optdepends=(
     "(because Debian does so probably)."
 )
 optdepends=(
-  "${filesystem_optdepends[*]}"
+  "${_filesystem_optdepends[*]}"
+  "${_resolv_conf_optdepends[*]}"
 )
 makedepends=(
   # An apparent self-dependency
