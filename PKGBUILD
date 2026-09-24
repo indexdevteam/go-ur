@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=31
+pkgrel=32
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -433,7 +433,10 @@ build() {
   if [[ "${_os}" == "Android" ]]; then
     _ldflags+=(
       # "$LDFLAGS"
-      -extldflags="-pie"
+      # This option only gets passed
+      # to gcc. not even
+      -pie
+      -Wl,pie
     )
     _linker="/system/bin/linker"
     if [[ "${_arch}" == "aarch64" || \
