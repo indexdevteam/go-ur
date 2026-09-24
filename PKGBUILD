@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=44
+pkgrel=45
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -459,7 +459,8 @@ build() {
           "${_arch}" == "x86_64" ]]; then
       _linker="${_linker}64"
     fi
-    if [[ "${_arch}" == "arm" ]]; then
+    if [[ "${_arch}" == "arm" || \
+          "${_arch}" == "i686" ]]; then
       # Reason:
       # ld.ldd: error: relocation R_ARM_ABS32
       # cannot be used against symbol 'runtime.call256';
