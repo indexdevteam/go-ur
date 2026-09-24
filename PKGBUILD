@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=26
+pkgrel=27
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -615,6 +615,13 @@ package() {
     -vDm644 \
     "LICENSE" \
     "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  if [[ "${_os}" == "Msys2" ]]; then
+    echo \
+      "export GOROOT=${_usr}/lib/${_pkg}" > \
+      "${pkgdir}${_usr}/etc/profile.d/${_pkg}.sh"
+    cp \
+      "${pkgdir}${_usr}/etc/profile.d/${_pkg}."{"sh","zsh"}
+  fi
 }
 
 # vim: ts=2 sw=2 et
