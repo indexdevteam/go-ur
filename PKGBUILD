@@ -113,7 +113,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=12
+pkgrel=13
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -222,6 +222,15 @@ build() {
     _msg=() \
     _make_bash \
     _usr
+  local \
+    _go_flags=()
+  _go_flags=(
+    -buildmode=pie
+    -trimpath
+    -ldflags=-linkmode=external
+    -mod=vendor
+    -modcacherw
+  )
   _make_bash="${srcdir}/${_tarname}/src/make.bash"
   _usr="$(
     _usr_get)"
@@ -251,6 +260,12 @@ build() {
   cd \
     "${_tarname}/src"
   if [[ "${_os}" == "Android" ]]; then
+    export \
+      CGO_CPPFLAGS="${CPPFLAGS}" \
+      CGO_CFLAGS="${CFLAGS}" \
+      CGO_CXXFLAGS="${CXXFLAGS}" \
+      CGO_LDFLAGS="${LDFLAGS}" \
+      GOFLAGS="${_go_flags[*]}"
     _android_fix_shebang \
       "${_make_bash}"
   fi
