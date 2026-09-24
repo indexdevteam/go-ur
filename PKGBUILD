@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=21
+pkgrel=22
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -372,7 +372,9 @@ build() {
     _ldflags=() \
     _linker \
     _msg=() \
-    _make_bash \
+    _make_bat \
+    _make_win \
+    _make \
     _usr
   _cxx_flags+=(
     ${CXXFLAGS}
@@ -385,6 +387,7 @@ build() {
     # -modcacherw
   )
   _make_bash="${srcdir}/${_tarname}/src/make.bash"
+  _make_bat="${srcdir}/${_tarname}/src/make.bat"
   _usr="$(
     _usr_get)"
   _arch="$(
@@ -423,6 +426,10 @@ build() {
       _linker="${_linker}64"
     fi
     if [[ "${_arch}" == "arm" ]]; then
+      # Reason:
+      # ld.ldd: error: relocation R_ARM_ABS32
+      # cannot be used against symbol 'runtime.call256';
+      # recompile with -fPIC
       _cxxflags+=(
         -fPIC
       )
@@ -437,7 +444,12 @@ build() {
     _android_fix_shebang \
       "${_make_bash}"
   fi
-  "${_make_bash}" \
+  if [[ "${_os}" == "Msys2" ]]; then
+    _make="${_make_bat}"
+  else
+    _make="${_make_bash}"
+  fi
+  "${_make}" \
     -v
 }
 
