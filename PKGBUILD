@@ -113,7 +113,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=14
+pkgrel=15
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -225,9 +225,9 @@ build() {
   local \
     _go_flags=()
   _go_flags=(
-    -buildmode=pie
+    # -buildmode=pie
     -trimpath
-    -ldflags=-linkmode=external
+    # -ldflags=-linkmode=external
     -mod=vendor
     -modcacherw
   )
