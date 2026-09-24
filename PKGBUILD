@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=37
+pkgrel=38
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -467,6 +467,7 @@ build() {
 		  CXX_FOR_TARGET="clang" \
 		  CC="clang"
     export \
+      CGO_ENABLED=0 \
       CGO_CPPFLAGS="${CPPFLAGS}" \
       CGO_CFLAGS="${CFLAGS}" \
       CGO_CXXFLAGS="${_cxxflags[*]}" \
