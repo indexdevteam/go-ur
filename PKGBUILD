@@ -520,7 +520,9 @@ build() {
     export \
       GO_CFLAGS="${_cflags[*]}" \
       CFLAGS="${_cflags[*]}" \
-      GO_BUILD_VERBOSE=1
+      GO_BUILD_VERBOSE=1 \
+      ROOT_BOOTSTRAP="${MINGW_PREFIX}/lib/go" \
+      GOROOT_FINAL="${MINGW_PREFIX}/lib/go"
     cmd \
       //c \
       "${_make}"
