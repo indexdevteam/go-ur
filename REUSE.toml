@@ -30,7 +30,7 @@ path = [
 ]
 
 SPDX-FileCopyrightText = "Termux contributors"
-SPDX-License-Identifier = "BSD-3-Clause"
+SPDX-License-Identifier = "AGPL3"
 
 [[annotations]]
 path = [
