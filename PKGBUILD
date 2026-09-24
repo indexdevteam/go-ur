@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=20
+pkgrel=21
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -367,12 +367,16 @@ _prepare() {
 build() {
   local \
     _arch \
+    _cxx_flags=() \
     _go_flags=() \
     _ldflags=() \
     _linker \
     _msg=() \
     _make_bash \
     _usr
+  _cxx_flags+=(
+    ${CXXFLAGS}
+  )
   _go_flags+=(
     # -buildmode=pie
     # -trimpath
@@ -411,18 +415,23 @@ build() {
   if [[ "${_os}" == "Android" ]]; then
     _ldflags+=(
       # "$LDFLAGS"
-      "-extldflag=-pie"
+      -extldflag="-pie"
     )
     _linker="/system/bin/linker"
     if [[ "${_arch}" == "aarch64" || \
           "${_arch}" == "x86_64" ]]; then
       _linker="${_linker}64"
     fi
+    if [[ "${_arch}" == "arm" ]]; then
+      _cxxflags+=(
+        -fPIC
+      )
+    fi
     export \
       CGO_CPPFLAGS="${CPPFLAGS}" \
       CGO_CFLAGS="${CFLAGS}" \
-      CGO_CXXFLAGS="${CXXFLAGS}" \
-      CGO_LDFLAGS="${LDFLAGS}" \
+      CGO_CXXFLAGS="${_cxxflags[*]}" \
+      CGO_LDFLAGS="${_ldflags[*]}" \
       G0_LDSO="${_linker}"
       GOFLAGS="${_go_flags[*]}"
     _android_fix_shebang \
