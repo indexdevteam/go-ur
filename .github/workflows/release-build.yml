@@ -72,14 +72,15 @@ jobs:
               termux
             architecture:
               arm
-          - runner:
-              ubuntu-24.04
-            platform:
-              android
-            platform_target:
-              termux
-            architecture:
-              x86_64
+          # Disable on Android x86_64
+          # - runner:
+          #     ubuntu-24.04
+          #   platform:
+          #     android
+          #   platform_target:
+          #     termux
+          #   architecture:
+          #     x86_64
     runs-on:
       ${{ matrix.runner }}
     # prepare writable volume prefix mount for actions/upload-artifact,
