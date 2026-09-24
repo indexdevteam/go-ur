@@ -373,6 +373,7 @@ _prepare() {
 build() {
   local \
     _arch \
+    _cflags=() \
     _cxx_flags=() \
     _go_flags=() \
     _ldflags=() \
@@ -382,6 +383,9 @@ build() {
     _make_win \
     _make \
     _usr
+  _cflags=(
+    # ${CFLAGS}
+  )
   _cxx_flags+=(
     ${CXXFLAGS}
   )
@@ -424,7 +428,7 @@ build() {
   if [[ "${_os}" == "Android" ]]; then
     _ldflags+=(
       # "$LDFLAGS"
-      -extldflag=-pie
+      # -extldflag=-pie
     )
     _linker="/system/bin/linker"
     if [[ "${_arch}" == "aarch64" || \
@@ -452,11 +456,23 @@ build() {
   fi
   if [[ "${_os}" == "Msys2" ]]; then
     _make="${_make_bat}"
+    _cflags+=(
+      -D__USE_MINGW_ANSI_STDIO=1
+    )
+    echo \
+      "Windows build."
+    export \
+      GO_CFLAGS="${_cflags[*]}" \
+      CFLAGS="${_cflags[*]}" \
+      GO_BUILD_VERBOSE=1
+    cmd \
+      //c \
+      "${_make}"
   else
     _make="${_make_bash}"
+    "${_make}" \
+      -v
   fi
-  "${_make}" \
-    -v
 }
 
 check() {
