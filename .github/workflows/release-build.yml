@@ -2287,10 +2287,7 @@ jobs:
       - uses:
           actions/checkout@v7.0.1
       - name:
-        Installs recent EVM GNUPG.
-        env:
-          GITHUB_TOKEN:
-            ${{ secrets.GITHUB_TOKEN }}
+          Installs recent EVM GNUPG.
         run: |
             git \
               clone \
