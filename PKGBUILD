@@ -85,6 +85,13 @@
 #       "golangci-lint" \
 #       "staticcheck"
 
+if [[ ! -v "_docs" ]]; then
+  _docs="true"
+fi
+if [[ ! -v "_git" ]]; then
+  _git="true"
+fi
+_git="true"
 _pkg=go
 pkgbase="${_pkg}"
 pkgname=(
@@ -92,7 +99,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -110,15 +117,23 @@ license=(
   "BSD-3-Clause"
 )
 makedepends=(
-  "git"
   # An apparent self-dependency
   "${_pkg}"
 )
+if [[ "${_git}" == "true" ]]; then
+  makedepends+=(
+    "git"
+  )
+fi
 replaces=(
   "${_pkg}-pie"
 )
 provides=(
   "${_pkg}-pie=${pkgver}"
+  "${_pkg}lang=${pkgver}"
+)
+conflicts=(
+  "${_pkg}lang"
 )
 options=(
   "!strip"
@@ -128,7 +143,8 @@ source=(
   "https://${_pkg}.dev/dl/${_pkg}${pkgver}.src.tar.gz"{,.asc}
 )
 validpgpkeys=(
-  # whos this
+  # Google Inc. (Linux Packages Signing Authority)
+  #   <linux-packages-keymaster@google.com>
   'EB4C1BFD4F042F6DDDCCEC917721F63BD38B4796'
 )
 sha256sums=(
@@ -223,7 +239,8 @@ package() {
     if [[ "${_os}" == "Android" ]]; then
       install \
         -vdm755 \
-        "${pkgdir}/usr/lib/go/pkg/android_amd64_"{"dynlink","race"}
+        "${pkgdir}/usr/lib/${_pkg}/pkg/android_amd64_"{"dynlink","race"}
+    fi
     if [[ "${_os}" == "Msys2" ]]; then
       echo \
         "boh"
