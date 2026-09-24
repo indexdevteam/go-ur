@@ -493,6 +493,7 @@ build() {
     _android_fix_shebang \
       "${_make_bash}"
   fi
+  echo "${_os}"
   if [[ "${_os}" == "Msys2" ]]; then
     _make="${_make_bat}"
     _cflags+=(
