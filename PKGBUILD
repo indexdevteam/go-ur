@@ -89,6 +89,7 @@ _pkg=go
 pkgbase="${_pkg}"
 pkgname=(
   "${_pkg}"
+)
 epoch=2
 pkgver=1.27.1
 pkgrel=1
@@ -110,13 +111,14 @@ license=(
 )
 makedepends=(
   "git"
-  "go"
+  # An apparent self-dependency
+  "${_pkg}"
 )
 replaces=(
-  "go-pie"
+  "${_pkg}-pie"
 )
 provides=(
-  "go-pie"
+  "${_pkg}-pie=${pkgver}"
 )
 options=(
   "!strip"
@@ -126,6 +128,7 @@ source=(
   "https://${_pkg}.dev/dl/${_pkg}${pkgver}.src.tar.gz"{,.asc}
 )
 validpgpkeys=(
+  # whos this
   'EB4C1BFD4F042F6DDDCCEC917721F63BD38B4796'
 )
 sha256sums=(
@@ -148,6 +151,7 @@ _usr_get() {
 build() {
   local \
     _arch \
+    _msg=() \
     _usr
   _usr="$(
     _usr_get)"
@@ -155,11 +159,18 @@ build() {
     uname \
       -m)"
   if [[ "${_arch}" == "aarch64" ]]; then
+    _msg=(
+      "Do not specify any architecture"
+      "on aarch64."
+    )
+    echo \
+      "${_msg[*]}" \
+      1>&2
   elif [[ "${_arch}" == "x86_64" ]]; then
     # make sure we're building for the right x86-64 version
     export \
-      GOARCH=amd64 \
-      GOAMD64=v1
+      GOARCH="amd64" \
+      GOAMD64="v1"
   fi
   export \
     GOROOT_FINAL="${_usr}/lib/go"
@@ -176,7 +187,6 @@ build() {
 check() {
   export \
     GO_TEST_TIMEOUT_SCALE=3
-
   cd \
     "${_pkg}/src"
   # TODO:
@@ -210,10 +220,54 @@ package() {
     "${pkgdir}/usr/lib/${_pkg}" \
     "${pkgdir}/usr/share/doc/${_pkg}"
   if [[ "${_arch}" == "x86_64" ]]; then
-    install \
-      -vdm755 \
-      "${pkgdir}/usr/lib/go/pkg/linux_amd64_"{"dynlink","race"}
-
+    if [[ "${_os}" == "Android" ]]; then
+      install \
+        -vdm755 \
+        "${pkgdir}/usr/lib/go/pkg/android_amd64_"{"dynlink","race"}
+    if [[ "${_os}" == "Msys2" ]]; then
+      echo \
+        "boh"
+    else
+      install \
+        -vdm755 \
+        "${pkgdir}/usr/lib/go/pkg/linux_amd64_"{"dynlink","race"}
+    fi
+  elif [[ "${_arch}" == "aarch64" ]]; then
+    if [[ "${_os}" == "Android" ]]; then
+      install \
+        -vdm755 \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/linux_aarch64_"{"dynlink","race"} \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/linux_arm64_"{"dynlink","race"} \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/linux_arm64_"{"dynlink","race"}
+    fi
+    if [[ "${_os}" == "Msys2" ]]; then
+      echo \
+        "boh"
+    else
+      install \
+        -vdm755 \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/linux_aarch64_"{"dynlink","race"} \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/linux_arm64_"{"dynlink","race"} \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/linux_arm64_"{"dynlink","race"}
+    fi
+  elif [[ "${_arch}" == "arm" ]]; then
+    if [[ "${_os}" == "Android" ]]; then
+      install \
+        -vdm755 \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/android_arm_"{"dynlink","race"} \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/android_armv7l_"{"dynlink","race"} \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/android_armv8l_"{"dynlink","race"}
+    fi
+    if [[ "${_os}" == "Msys2" ]]; then
+      echo \
+        "boh"
+    else
+      install \
+        -vdm755 \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/linux_arm_"{"dynlink","race"} \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/linux_armv7l_"{"dynlink","race"} \
+        "${pkgdir}/usr/lib/${_pkg}/pkg/linux_armv8l_"{"dynlink","race"}
+    fi
   fi
   cp \
     -a \
@@ -243,7 +297,7 @@ package() {
     "${pkgdir}/usr/bin/${_pkg}"
   ln \
     -sf \
-    "${_usr}/lib/go/bin/${_pkg}fmt" \
+    "${_usr}/lib/${_pkg}/bin/${_pkg}fmt" \
     "${pkgdir}/usr/bin/${_pkg}fmt"
   ln \
     -sf \
