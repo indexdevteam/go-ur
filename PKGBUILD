@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=32
+pkgrel=33
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -435,8 +435,9 @@ build() {
       # "$LDFLAGS"
       # This option only gets passed
       # to gcc. not even
+      # -extldflags="-pie"
       -pie
-      -Wl,pie
+      -Wl,-pie
     )
     _linker="/system/bin/linker"
     if [[ "${_arch}" == "aarch64" || \
