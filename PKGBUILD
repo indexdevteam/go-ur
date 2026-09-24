@@ -139,7 +139,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=48
+pkgrel=49
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -499,7 +499,7 @@ build() {
       "${_make_bash}"
   fi
   echo "${_os}"
-  if [[ "${_os}" == "Msys2" ]]; then
+  if [[ "${_os}" == "Msys" ]]; then
     _make="${_make_bat}"
     _cflags+=(
       -D__USE_MINGW_ANSI_STDIO=1
@@ -561,7 +561,7 @@ package() {
         -vdm755 \
         "${pkgdir}/usr/lib/${_pkg}/pkg/android_amd64_"{"dynlink","race"}
     fi
-    if [[ "${_os}" == "Msys2" ]]; then
+    if [[ "${_os}" == "Msys" ]]; then
       echo \
         "boh"
     else
@@ -577,7 +577,7 @@ package() {
         "${pkgdir}/usr/lib/${_pkg}/pkg/linux_arm64_"{"dynlink","race"} \
         "${pkgdir}/usr/lib/${_pkg}/pkg/linux_arm64_"{"dynlink","race"}
     fi
-    if [[ "${_os}" == "Msys2" ]]; then
+    if [[ "${_os}" == "Msys" ]]; then
       echo \
         "boh"
     else
@@ -595,7 +595,7 @@ package() {
         "${pkgdir}/usr/lib/${_pkg}/pkg/android_armv7l_"{"dynlink","race"} \
         "${pkgdir}/usr/lib/${_pkg}/pkg/android_armv8l_"{"dynlink","race"}
     fi
-    if [[ "${_os}" == "Msys2" ]]; then
+    if [[ "${_os}" == "Msys" ]]; then
       echo \
         "boh"
     else
@@ -660,7 +660,7 @@ package() {
     -vDm644 \
     "LICENSE" \
     "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
-  if [[ "${_os}" == "Msys2" ]]; then
+  if [[ "${_os}" == "Msys" ]]; then
     echo \
       "export GOROOT=${_usr}/lib/${_pkg}" > \
       "${pkgdir}${_usr}/etc/profile.d/${_pkg}.sh"
