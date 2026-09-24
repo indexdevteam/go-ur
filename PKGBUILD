@@ -89,6 +89,7 @@ _os="$(
   uname \
     -o)"
 if [[ ! -v "_bootstrap" ]]; then
+  _bootstrap="false"
   if [[ "${_os}" == "Android" ]]; then
     _bootstrap="true"
   fi
@@ -112,7 +113,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=2
+pkgrel=3
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
