@@ -113,7 +113,7 @@ pkgname=(
 )
 epoch=2
 pkgver=1.27.1
-pkgrel=9
+pkgrel=10
 pkgdesc='Core compiler tools for the Go programming language'
 arch=(
   "aarch64"
@@ -182,12 +182,22 @@ _usr_get() {
 _android_fix_shebang() {
   local \
     _file="${1}" \
+    _msg=() \
     _pattern \
     _patterns=() \
     _repl
+  if [[ ! -e "${_file}" ]]; then
+    _msg=(
+      "File '${_file}' does"
+      "not exist."
+    )
+    echo \
+      "${_msg[*]}" \
+      1>&2
+  fi
   _pattern=(
-    "#!/usr/bin/env"
-    "# !/usr/bin/env"
+    "^#!/usr/bin/env"
+    "^#! /usr/bin/env"
   )
   _repl="#!/data/data/com.termux/files/usr/bin/env bash"
   for _pattern in "${_patterns[@]}"; do
@@ -196,6 +206,14 @@ _android_fix_shebang() {
       -i \
       "${_file}"
   done
+  _termux_fix_shebang="$(
+    command \
+      -v \
+      "termux-fix-shebang")"
+  if [[ "${_termux_fix_shebang}" != "" ]]; then
+    termux-fix-shebang \
+      "${_file}"
+  fi
 }
 
 build() {
