@@ -64,14 +64,16 @@ jobs:
               termux
             architecture:
               i686
-          - runner:
-              ubuntu-24.04-arm
-            platform:
-              android
-            platform_target:
-              termux
-            architecture:
-              arm
+          # I doubt the issue is only
+          # with ARM32 at this point
+          # - runner:
+          #     ubuntu-24.04-arm
+          #   platform:
+          #     android
+          #   platform_target:
+          #     termux
+          #   architecture:
+          #     arm
           # Disable on Android x86_64
           # - runner:
           #     ubuntu-24.04
