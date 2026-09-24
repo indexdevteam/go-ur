@@ -85,6 +85,20 @@
 #       "golangci-lint" \
 #       "staticcheck"
 
+_os="$(
+  uname \
+    -o)"
+if [[ ! -v "_bootstrap" ]]; then
+  if [[ "${_os}" == "Android" ]]; then
+    _bootstrap="true"
+  fi
+fi 
+_pkg=go
+_pkg_alt="${_pkg}lang"
+_go_pkg="${_pkg}"
+if [[ "${_bootstrap}" == "true" ]]; then
+  _go_pkg="${_pkg_alt}"
+fi
 if [[ ! -v "_docs" ]]; then
   _docs="true"
 fi
@@ -92,7 +106,6 @@ if [[ ! -v "_git" ]]; then
   _git="true"
 fi
 _git="true"
-_pkg=go
 pkgbase="${_pkg}"
 pkgname=(
   "${_pkg}"
@@ -118,7 +131,7 @@ license=(
 )
 makedepends=(
   # An apparent self-dependency
-  "${_pkg}"
+  "${_go_pkg}"
 )
 if [[ "${_git}" == "true" ]]; then
   makedepends+=(
